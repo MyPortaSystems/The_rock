@@ -9,9 +9,13 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-
+import dj_database_url
 from pathlib import Path
 import os
+import environ 
+
+env = environ.Env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-9l@#$^4y1$3ej)3n4*l+md+3n8x+ey=u*vfs83z4(4+=2&!pb@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -37,9 +41,10 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    "whitenoise.runserver_nostatic",
     'django.contrib.staticfiles',
-    'resultapp'
+    'resultapp',
+    'whitenoise'
+
 ]
 
 MIDDLEWARE = [
@@ -78,13 +83,26 @@ WSGI_APPLICATION = 'resultchecker.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
+
+DATABASES = {
+  
+'default': dj_database_url.parse(env('DATABASE_URL'))
+
+ }
+DATABASES = {
+     'default': dj_database_url.parse(
+        'postgres://ndydb_user:odad4HUujYtKsYG1SnoH3DS3S7iTl0O6@dpg-cmj7c3da73kc739onaag-a.oregon-postgres.render.com/ndydb',
+         conn_max_age=600,
+        conn_health_checks=True,
+     )
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -132,3 +150,4 @@ STATICFILES_STORAGE = "whitemoise.storage.CompressedManifestStaticFilesStorage"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
